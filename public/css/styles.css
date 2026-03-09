@@ -1,6 +1,185 @@
-/******* Change Box Model ***************/
-*,
-*:before,
-*:after {
+/* Box model basic */
+*, *:before, *:after {
   box-sizing: border-box;
+}
+
+
+body {
+    background-image: url('/images/site/checkerboard.jpg'); 
+    margin: 0;
+    padding: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#wrapper {
+    background-color: white;
+    max-width: 1000px;
+    margin: 0 auto;
+    border: 5px solid #4ed3ff; 
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+#top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.siteName a {
+    font-size: 2rem;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+#tools a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+nav {
+    background-color: #333;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: space-around;
+}
+
+nav ul li {
+    padding: 15px 5px;
+    color: white;
+    cursor: pointer;
+}
+
+
+#hero-section {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-content {
+    color: #00b0f0; 
+    order: 1;
+}
+
+.hero-content h2 { margin: 10px 0; }
+
+.hero-list {
+    list-style: none;
+    padding: 0;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
+.own-today-btn {
+    background-color: #00b0f0;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.hero-image { order: 2; margin-top: 10px; }
+.hero-image img { width: 100%; height: auto; }
+
+
+.main-details {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+#upgrades { order: 2; }
+#reviews { order: 1; }
+
+.upgrade-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.upgrade-card {
+    background-color: #333;
+    border: 1px solid #00b0f0;
+    text-align: center;
+    padding: 10px;
+}
+
+.upgrade-card a {
+    color: white; 
+    font-weight: bold;
+}
+
+.img-container {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-container img { max-height: 100%; }
+
+footer {
+    padding: 20px;
+    border-top: 1px solid #ccc;
+}
+
+
+@media screen and (min-width: 768px) {
+    
+    #hero-section {
+        position: relative; 
+        padding: 20px;
+    }
+
+    .hero-content {
+        position: absolute;
+        top: 60px;
+        left: 50px;
+        background-color: rgba(255, 255, 255, 0.8); 
+        padding: 15px 30px;
+        border: 1px solid #00b0f0;
+        z-index: 5;
+    }
+
+    .hero-image {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hero-image img {
+        width: 80%; 
+    }
+
+    
+    .main-details {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    #upgrades {
+        width: 48%;
+        order: 1; 
+    }
+
+    #reviews {
+        width: 48%;
+        order: 2; 
+    }
 }

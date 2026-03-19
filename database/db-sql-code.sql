@@ -72,8 +72,7 @@ VALUES
     ('Spartan', 'Fire Truck', '2012', 'Emergencies happen often.', '/images/fire-truck.jpg', '/images/fire-truck-tn.jpg', 50000, 38522, 'Red', 4),
     ('Ford', 'Crown Victoria', '2013', 'After the police force updated their fleet.', '/images/crwn-vic.jpg', '/images/crwn-vic-tn.jpg', 10000, 108247, 'White', 5);
 
--- 8. Final updates from Task 1 (Reemplazo de descripción y rutas de imágenes)
--- Esto asegura que los cambios requeridos se apliquen automáticamente al reconstruir.
+
 
 UPDATE public.inventory
 SET inv_description = REPLACE(inv_description, 'small interiors', 'a huge interior')

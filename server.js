@@ -1,44 +1,38 @@
-/* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
-/* ***********************
- * Require Statements
- *************************/
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
 const env = require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
-
-/* **********************
- * View Engine and Templates
- **********************/
+const inventoryRoute = require("./routes/inventoryRoute")
+const utilities = require("./utilities/")
 
 app.set("view engine", "ejs")
 app.use(expressLayouts)
-app.set("layout", "./layouts/layout") 
+app.set("layout", "./layouts/layout")
 
-/* ***********************
- * Routes
- *************************/
+// 1. Estáticos
 app.use(static)
 
-// Index route
-app.get("/", function(req, res){
-  res.render("index", {title: "Home"})
+// 2. IMPORTANTE: La ruta de inventario primero
+app.use("/inv", inventoryRoute)
+
+// 3. Ruta Home
+app.get("/", async (req, res) => {
+  let nav = await utilities.getNav()
+  res.render("index", { title: "Home", nav })
 })
 
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
-const port = process.env.PORT
-const host = process.env.HOST
+// 4. Error Handler (Tarea 3)
+app.use(async (err, req, res, next) => {
+  let nav = await utilities.getNav()
+  res.status(err.status || 500).render("errors/error", {
+    title: err.status || 'Server Error',
+    message: err.message,
+    nav
+  })
+})
 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
+const port = process.env.PORT || 5500
 app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`)
+  console.log(`Servidor corriendo en http://localhost:${port}`)
 })

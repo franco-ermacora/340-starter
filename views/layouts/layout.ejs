@@ -5,9 +5,15 @@
 <body>
   <div id="wrapper">
     <%- include('../partials/header') %>
-    <%- include('../partials/navigation') %>
+    
+    <nav>
+      <%- nav %>
+    </nav>
 
     <main>
+      <% if (title) { %>
+        <h1><%= title %></h1>
+      <% } %>
       <%- body %>
     </main>
 

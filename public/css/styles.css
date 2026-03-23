@@ -3,7 +3,6 @@
   box-sizing: border-box;
 }
 
-
 body {
     background-image: url('/images/site/checkerboard.jpg'); 
     margin: 0;
@@ -19,7 +18,6 @@ body {
     border-radius: 10px;
     overflow: hidden;
 }
-
 
 #top-header {
     display: flex;
@@ -41,6 +39,7 @@ body {
     font-size: 0.9rem;
 }
 
+
 nav {
     background-color: #333;
 }
@@ -53,10 +52,25 @@ nav ul {
     justify-content: space-around;
 }
 
+
 nav ul li {
-    padding: 15px 5px;
+    margin: 0;
+}
+
+nav ul li a, 
+nav ul li a:visited {
     color: white;
-    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    padding: 15px 10px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+
+nav ul li a:hover {
+    background-color: #555;
+    color: #4ed3ff; 
 }
 
 
@@ -91,7 +105,6 @@ nav ul li {
 
 .hero-image { order: 2; margin-top: 10px; }
 .hero-image img { width: 100%; height: auto; }
-
 
 .main-details {
     display: flex;
@@ -166,7 +179,6 @@ footer {
         width: 80%; 
     }
 
-    
     .main-details {
         flex-direction: row;
         justify-content: space-between;

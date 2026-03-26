@@ -74,4 +74,11 @@ Util.buildVehicleDisplay = async function (data) {
   return display
 }
 
+/* ****************************************
+ * Middleware to handle errors
+ * Wrap other function in this for 
+ * Global Error Handling
+ * *************************************** */
+Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+
 module.exports = Util

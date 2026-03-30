@@ -1,20 +1,21 @@
 const utilities = require("../utilities/")
 const accountModel = require("../models/account-model")
+const bcrypt = require("bcryptjs") // Requerimos la librería de hashing
 
 /* ****************************************
-* Entregar vista de Login
+* Entregar vista de Login (GET)
 * *************************************** */
 async function buildLogin(req, res, next) {
   let nav = await utilities.getNav()
   res.render("account/login", {
     title: "Login",
     nav,
-    errors: null, // Agregamos esto por seguridad
+    errors: null,
   })
 }
 
 /* ****************************************
-* Entregar vista de Registro
+* Entregar vista de Registro (GET)
 * *************************************** */
 async function buildRegister(req, res, next) {
   let nav = await utilities.getNav()
@@ -37,11 +38,27 @@ async function registerAccount(req, res) {
     account_password 
   } = req.body
 
+  // --- NUEVO: HASHING DE CONTRASEÑA ---
+  let hashedPassword
+  try {
+    // El 10 es el "cost factor" (salt rounds)
+    hashedPassword = await bcrypt.hashSync(account_password, 10)
+  } catch (error) {
+    req.flash("notice", 'Sorry, there was an error processing the registration.')
+    res.status(500).render("account/register", {
+      title: "Registration",
+      nav,
+      errors: null,
+    })
+    return // Detenemos la ejecución si falla el hash
+  }
+
+  // Enviamos la contraseña HASHEADA al modelo
   const regResult = await accountModel.registerAccount(
     account_firstname,
     account_lastname,
     account_email,
-    account_password
+    hashedPassword // <--- Usamos la variable con el hash
   )
 
   if (regResult) {
@@ -52,15 +69,15 @@ async function registerAccount(req, res) {
     res.status(201).render("account/login", {
       title: "Login",
       nav,
-      errors: null, // Siempre pasar errors: null si todo salió bien
+      errors: null,
     })
   } else {
     req.flash("notice", "Sorry, the registration failed.")
     res.status(501).render("account/register", {
       title: "Registration",
       nav,
-      errors: null, // Agregamos esto para que la vista no explote
-      // Esto devuelve los datos al formulario (Stickiness)
+      errors: null,
+      // Stickiness: devolvemos los datos para que no se borren
       account_firstname,
       account_lastname,
       account_email,

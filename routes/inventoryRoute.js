@@ -2,35 +2,36 @@ const express = require("express")
 const router = new express.Router()
 const invController = require("../controllers/invController")
 const utilities = require("../utilities/") 
-const regValidate = require("../utilities/inventory-validation") // Importamos el validador
+const regValidate = require("../utilities/inventory-validation")
 
-// category route
+// Rutas de visualización pública
 router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId))
-
-// detail route
 router.get("/detail/:invId", utilities.handleErrors(invController.buildByInvId))
-
-// error trigger route
 router.get("/error", utilities.handleErrors(invController.triggerError))
 
-/* ****************************************
- * Ruta para la administración del inventario
- * *************************************** */
+// Ruta principal de administración
 router.get("/", utilities.handleErrors(invController.buildManagement))
 
-// RUTAS PARA CLASIFICACIÓN
+// AJAX: Obtener lista de vehículos para la tabla
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
+
+// Rutas para Clasificación
 router.get("/addClassification", utilities.handleErrors(invController.buildAddClassification))
 router.post("/addClassification", utilities.handleErrors(invController.addClassification))
 
-// RUTAS PARA VEHÍCULOS
+// Rutas para Añadir Vehículos
 router.get("/addVehicle", utilities.handleErrors(invController.buildAddInventory))
+router.post("/addVehicle", regValidate.vehicleRules(), regValidate.checkVehicleData, utilities.handleErrors(invController.addClassificationInventory))
 
-// REEMPLAZAMOS LA RUTA ANTERIOR POR ESTA (CON VALIDACIONES):
+// Rutas para EDITAR Vehículos (NUEVO)
+router.get("/edit/:inv_id", utilities.handleErrors(invController.editInventoryView))
+
+// Ruta para PROCESAR la actualización
 router.post(
-  "/addVehicle",
-  regValidate.vehicleRules(), 
-  regValidate.checkVehicleData, 
-  utilities.handleErrors(invController.addClassificationInventory)
+  "/update", 
+  regValidate.vehicleRules(), // Reutilizamos las reglas de validación
+  regValidate.checkUpdateData, // Middleware específico para Update (deberás crearlo en validation.js)
+  utilities.handleErrors(invController.updateInventory)
 )
 
 module.exports = router

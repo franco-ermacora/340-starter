@@ -1,0 +1,11 @@
+<% if (messages) { %>
+    <%- messages %>
+<% } %>
+
+<h1><%= title %></h1>
+<p>You're logged in, <%= locals.accountData.account_firstname %>!</p>
+
+<% if (locals.accountData.account_type === 'Employee' || locals.accountData.account_type === 'Admin') { %>
+    <h2>Inventory Management</h2>
+    <p><a href="/inv/">Click here to manage inventory</a></p>
+<% } %>

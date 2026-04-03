@@ -1,6 +1,8 @@
 const utilities = require("../utilities/")
 const accountModel = require("../models/account-model")
-const bcrypt = require("bcryptjs") // Requerimos la librería de hashing
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken") 
+require("dotenv").config() 
 
 /* ****************************************
 * Entregar vista de Login (GET)
@@ -38,10 +40,8 @@ async function registerAccount(req, res) {
     account_password 
   } = req.body
 
-  // --- NUEVO: HASHING DE CONTRASEÑA ---
   let hashedPassword
   try {
-    // El 10 es el "cost factor" (salt rounds)
     hashedPassword = await bcrypt.hashSync(account_password, 10)
   } catch (error) {
     req.flash("notice", 'Sorry, there was an error processing the registration.')
@@ -50,15 +50,14 @@ async function registerAccount(req, res) {
       nav,
       errors: null,
     })
-    return // Detenemos la ejecución si falla el hash
+    return 
   }
 
-  // Enviamos la contraseña HASHEADA al modelo
   const regResult = await accountModel.registerAccount(
     account_firstname,
     account_lastname,
     account_email,
-    hashedPassword // <--- Usamos la variable con el hash
+    hashedPassword 
   )
 
   if (regResult) {
@@ -77,7 +76,6 @@ async function registerAccount(req, res) {
       title: "Registration",
       nav,
       errors: null,
-      // Stickiness: devolvemos los datos para que no se borren
       account_firstname,
       account_lastname,
       account_email,
@@ -85,4 +83,66 @@ async function registerAccount(req, res) {
   }
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount }
+/* ****************************************
+ * PROCESAR LOGIN (POST) 
+ * ************************************ */
+async function accountLogin(req, res) {
+  let nav = await utilities.getNav()
+  const { account_email, account_password } = req.body
+  const accountData = await accountModel.getAccountByEmail(account_email)
+  
+  if (!accountData) {
+    req.flash("notice", "Please check your credentials and try again.")
+    res.status(400).render("account/login", {
+      title: "Login",
+      nav,
+      errors: null,
+      account_email,
+    })
+    return
+  }
+
+  try {
+    if (await bcrypt.compare(account_password, accountData.account_password)) {
+      delete accountData.account_password
+      const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 * 1000 })
+      
+      if (process.env.NODE_ENV === 'development') {
+        res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 })
+      } else {
+        res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600 * 1000 })
+      }
+      return res.redirect("/account/")
+    } else {
+      req.flash("notice", "Please check your credentials and try again.")
+      res.status(400).render("account/login", {
+        title: "Login",
+        nav,
+        errors: null,
+        account_email,
+      })
+    }
+  } catch (error) {
+    throw new Error('Access Forbidden')
+  }
+}
+
+/* ****************************************
+ * Entregar vista de Administración de Cuenta (GET)
+ * **************************************** */
+async function buildManagement(req, res, next) {
+  let nav = await utilities.getNav()
+  res.render("account/management", {
+    title: "Account Management",
+    nav,
+    errors: null,
+  })
+}
+
+module.exports = { 
+  buildLogin, 
+  buildRegister, 
+  registerAccount, 
+  accountLogin, 
+  buildManagement // Exportamos la nueva función
+}

@@ -4,11 +4,12 @@ const env = require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
 const inventoryRoute = require("./routes/inventoryRoute")
-const accountRoute = require("./routes/accountRoute") // Agregamos esta
+const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities/")
 const session = require("express-session")
 const pool = require('./database/')
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser") // Importar cookie-parser
 
 /* ***********************
  * Middleware de Sesión y Mensajes
@@ -23,6 +24,10 @@ app.use(session({
   saveUninitialized: true,
   name: 'sessionId',
 }))
+
+// Middleware de Cookies y JWT
+app.use(cookieParser()) // Para que el servidor lea las cookies
+app.use(utilities.checkJWTToken) // Para que verifique si el usuario está logueado en cada click
 
 // Middleware para que los mensajes flash funcionen
 app.use(require('connect-flash')())
@@ -39,28 +44,21 @@ app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
-
 /* ***********************
  * Rutas
  * ************************/
-
-// 1. Archivos Estáticos
 app.use(static)
-
-// 2. Rutas de Inventario
 app.use("/inv", inventoryRoute)
-
-// 3. Rutas de Cuenta (Login/Registro) - ESTA ES LA QUE FALTABA
 app.use("/account", accountRoute)
 
-// 4. Ruta Home
+// Ruta Home
 app.get("/", async (req, res) => {
   let nav = await utilities.getNav()
   res.render("index", { title: "Home", nav })
 })
 
 /* ***********************
- * Error Handler (Tarea 3)
+ * Error Handler
  * ************************/
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav()
@@ -71,9 +69,6 @@ app.use(async (err, req, res, next) => {
   })
 })
 
-/* ***********************
- * Configuración del Servidor
- * ************************/
 const port = process.env.PORT || 5500
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`)

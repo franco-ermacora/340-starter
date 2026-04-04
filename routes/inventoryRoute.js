@@ -34,4 +34,10 @@ router.post(
   utilities.handleErrors(invController.updateInventory)
 )
 
+// Ruta para mostrar la confirmación de eliminación 
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteView))
+
+// Ruta para procesar la eliminación 
+router.post("/delete", utilities.handleErrors(invController.deleteItem))
+
 module.exports = router

@@ -92,5 +92,18 @@ async function updateInventory(
   }
 }
 
+/* ***************************
+ * Delete Inventory Item
+ * ************************** */
+async function deleteInventoryItem(inv_id) {
+  try {
+    const sql = 'DELETE FROM inventory WHERE inv_id = $1'
+    const data = await pool.query(sql, [inv_id])
+    return data // Si tuvo éxito, esto devuelve información sobre las filas afectadas
+  } catch (error) {
+    console.error("model error: " + error)
+  }
+}
 
-module.exports = { getClassifications, getInventoryByClassificationId, getInventoryById ,addClassification, registerVehicle, updateInventory}
+
+module.exports = { getClassifications, getInventoryByClassificationId, getInventoryById ,addClassification, registerVehicle, updateInventory, deleteInventoryItem}

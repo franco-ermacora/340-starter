@@ -1,0 +1,16 @@
+<%- messages() %>
+
+<h1><%= title %></h1>
+
+<p class="warning">Confirm Deletion - The delete is permanent and cannot be undone.</p>
+
+<form action="/inv/delete" method="post">
+    <label>Make: <input type="text" name="inv_make" value="<%= inv_make %>" readonly></label>
+    <label>Model: <input type="text" name="inv_model" value="<%= inv_model %>" readonly></label>
+    <label>Year: <input type="text" name="inv_year" value="<%= inv_year %>" readonly></label>
+    <label>Price: <input type="text" name="inv_price" value="<%= inv_price %>" readonly></label>
+    
+    <input type="hidden" name="inv_id" value="<%= inv_id %>">
+    
+    <button type="submit">Delete Vehicle</button>
+</form>

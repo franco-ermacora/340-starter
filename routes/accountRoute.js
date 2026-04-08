@@ -1,20 +1,19 @@
 const express = require("express")
 const router = new express.Router()
-const accountController = require("../controllers/accountController")
+const accountController = require("../controllers/accountController") // Usaremos este nombre
 const utilities = require("../utilities/")
 const regValidate = require('../utilities/account-validation')
 
-// Ruta para la administración de la cuenta (GET) - PROTEGIDA
+// Administración (PROTEGIDA)
 router.get("/", 
-  utilities.checkLogin, // El guardia: Si no está logueado, lo manda al login
-  utilities.handleErrors(accountController.buildManagement) // Tenés que crear esta función en el controlador si no la tenés
+  utilities.checkLogin, 
+  utilities.handleErrors(accountController.buildManagement)
 )
 
-// Ruta para mostrar Login y Registro (GET)
+// Login y Registro
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
-// Ruta para PROCESAR el registro (POST)
 router.post(
   "/register",
   regValidate.registrationRules(),
@@ -22,12 +21,32 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-// Ruta para PROCESAR el login (POST) - CORREGIDA
 router.post(
   "/login",
   regValidate.loginRules(),
   regValidate.checkLoginData,
-  utilities.handleErrors(accountController.accountLogin) // Ahora usa la función del controlador
+  utilities.handleErrors(accountController.accountLogin)
 )
+
+// --- ACTUALIZACIÓN DE CUENTA (Task 5) ---
+// Entrega de la vista
+router.get("/update/:account_id", utilities.handleErrors(accountController.buildAccountUpdate))
+
+// Proceso de Info (Fijate que cambié accountCont por accountController)
+router.post(
+  "/update-info", 
+  regValidate.updateAccountRules ? regValidate.updateAccountRules() : [], // Solo si tenés las reglas
+  utilities.handleErrors(accountController.processAccountUpdate)
+)
+
+// Proceso de Password
+router.post(
+  "/update-password", 
+  regValidate.passwordRules ? regValidate.passwordRules() : [], 
+  utilities.handleErrors(accountController.processPasswordUpdate)
+)
+
+// Logout
+router.get("/logout", accountController.accountLogout)
 
 module.exports = router

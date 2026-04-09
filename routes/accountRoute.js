@@ -1,16 +1,16 @@
 const express = require("express")
 const router = new express.Router()
-const accountController = require("../controllers/accountController") // Usaremos este nombre
+const accountController = require("../controllers/accountController")
 const utilities = require("../utilities/")
 const regValidate = require('../utilities/account-validation')
 
-// Administración (PROTEGIDA)
+// --- ADMINISTRACIÓN (PROTEGIDA) ---
 router.get("/", 
   utilities.checkLogin, 
   utilities.handleErrors(accountController.buildManagement)
 )
 
-// Login y Registro
+// --- LOGIN Y REGISTRO ---
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
@@ -29,24 +29,32 @@ router.post(
 )
 
 // --- ACTUALIZACIÓN DE CUENTA (Task 5) ---
-// Entrega de la vista
-router.get("/update/:account_id", utilities.handleErrors(accountController.buildAccountUpdate))
 
-// Proceso de Info (Fijate que cambié accountCont por accountController)
+// 1. Entrega de la vista (GET)
+router.get(
+  "/update/:account_id", 
+  utilities.checkLogin, // Agregado por seguridad
+  utilities.handleErrors(accountController.buildAccountUpdate)
+)
+
+// 2. Procesar actualización de datos básicos (POST)
 router.post(
-  "/update-info", 
-  regValidate.updateAccountRules ? regValidate.updateAccountRules() : [], // Solo si tenés las reglas
+  "/update-info",
+  regValidate.updateAccountRules(), 
+  regValidate.checkUpdateData,      
   utilities.handleErrors(accountController.processAccountUpdate)
 )
 
-// Proceso de Password
+// 3. Procesar actualización de contraseña (POST)
 router.post(
-  "/update-password", 
-  regValidate.passwordRules ? regValidate.passwordRules() : [], 
+  "/update-password",
+  // Usamos solo la regla de password del registro (es la posición 3 del array)
+  [regValidate.registrationRules()[3]], 
+  regValidate.checkUpdateData, 
   utilities.handleErrors(accountController.processPasswordUpdate)
 )
 
-// Logout
+// --- LOGOUT (Task 6) ---
 router.get("/logout", accountController.accountLogout)
 
 module.exports = router

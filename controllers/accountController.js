@@ -119,13 +119,6 @@ async function buildAccountUpdate(req, res, next) {
   })
 }
 
-/* ***************************
- * Process Logout (Task 6)
- * ************************** */
-async function accountLogout(req, res, next) {
-  res.clearCookie("jwt")
-  res.redirect("/")
-}
 
 /* ****************************************
 * Process Account Update (Task 5)
@@ -175,6 +168,12 @@ async function processPasswordUpdate(req, res) {
     req.flash("notice", "Sorry, the password update failed.")
     res.redirect(`/account/update/${account_id}`)
   }
+}
+
+async function accountLogout(req, res) {
+  res.clearCookie("jwt")
+  req.flash("notice", "You have logged out.")
+  res.redirect("/")
 }
 
 module.exports = { 

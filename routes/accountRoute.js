@@ -13,7 +13,7 @@ router.get("/",
 // --- LOGIN Y REGISTRO ---
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
-
+router.get("/logout", utilities.handleErrors(accountController.accountLogout))
 router.post(
   "/register",
   regValidate.registrationRules(),
@@ -27,6 +27,7 @@ router.post(
   regValidate.checkLoginData,
   utilities.handleErrors(accountController.accountLogin)
 )
+
 
 // --- ACTUALIZACIÓN DE CUENTA (Task 5) ---
 

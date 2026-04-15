@@ -1,3 +1,42 @@
 <div class="vehicle-detail-view">
-  <%- grid %>
+    <%- grid %>
+</div>
+
+<hr>
+
+<div class="reviews-section" style="padding: 20px;">
+    <h2>Customer Reviews</h2>
+    
+    <%- messages() %>
+
+    <% if (locals.loggedin) { %>
+        <div class="add-review">
+            <h3>Add your review</h3>
+            <form action="/review/add" method="post" style="display:flex; flex-direction:column; gap:10px; max-width:500px;">
+                <label for="review_text">Share your experience:</label>
+                <textarea id="review_text" name="review_text" rows="4" required></textarea>
+                
+                <input type="hidden" name="inv_id" value="<%= inv_id %>">
+                <input type="hidden" name="account_id" value="<%= locals.accountData.account_id %>">
+                
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
+    <% } else { %>
+        <p>Please <a href="/account/login">login</a> to write a review.</p>
+    <% } %>
+
+    <div class="reviews-list" style="margin-top:20px;">
+        <% if (locals.reviews && reviews.length > 0) { %>
+            <% reviews.forEach(review => { %>
+                <div class="review-card" style="border-bottom: 1px solid #ccc; margin-bottom: 10px; padding: 10px;">
+                    <p><strong><%= review.account_firstname %> <%= review.account_lastname %></strong> 
+                       <small>on <%= new Date(review.review_date).toLocaleDateString() %></small></p>
+                    <p><%= review.review_text %></p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No reviews yet. Be the first!</p>
+        <% } %>
+    </div>
 </div>
